@@ -1,0 +1,360 @@
+' 1.0.0 Prima versione pubblica
+' 0.2.2 Aggiunti commenti e aggiustata routine estrazione lunghezze
+' 0.2.1 Funziona .ini
+' 0.2.0 Aggiungo dialog  e menu per scelta input/output
+' 0.1.0 Prima versione funzionante
+
+$include "rapidq2-.inc"
+$include "QLibrary.Inc"
+$option explicit
+
+$Define MAX_PATH 260
+
+const VERSION = "1.0.0"
+'API declarations
+Declare Function GetPrivateProfileString Lib "Kernel32" Alias "GetPrivateProfileStringA" _
+ (ByVal lpApplicationName As String, ByVal lpKeyName As String, _
+ ByVal lpDefault As String, ByVal lpReturnedString As String, ByVal nSize As Long, ByVal lpFileName As String) As Long
+
+Declare Function WritePrivateProfileString Lib "Kernel32" Alias "WritePrivateProfileStringA" _
+ (ByVal lpApplicationName$, ByVal lpKeyName As String, lpString As String, ByVal lpFileName$) As Long
+
+'User's Variables
+Dim iLenght As Integer
+Dim szReturn As String
+Dim svReturn as String
+Dim szReturned as String
+szReturned = Space$(MAX_PATH) 'Dimension a buffer
+
+'Main Function to GET information into an INI File
+Function GetIni(szSection As String, svVariant As String, szFile As String) As String
+     iLenght = GetPrivateProfileString(szSection, svVariant, "", @szReturned, MAX_PATH, szFile)
+     szReturned = Left$(szReturned, iLenght)
+     GetIni = szReturned
+End Function
+
+'Main Function to WRITE information from an INI File
+Function WriteIni(szSection As String, svVariant As String, svValue As String, szFile As String) As Integer
+     WritePrivateProfileString szSection, svVariant, svValue, szFile
+End Function
+
+declare sub CreateWav(codename as string, code as string)
+declare function Lead0$(n as long) as string
+declare sub SetSoxPath
+declare sub GetLircFile
+declare sub CloseForm
+declare sub ReadConfig
+declare sub WriteConfig
+declare sub ShowVariables
+declare sub UpdateVariables
+declare function SkipSpaces(s as string) as string
+declare sub ShowAbout
+
+declare sub Process
+
+dim FileDialog as QOpenDialog
+dim SaveDialog as qSaveDialog
+dim in as qfilestream
+dim filecontents as string
+dim LIRCFileName as string
+dim THREETABS as string
+dim inizio as long
+dim fine as long
+dim code as string
+dim codename as string
+dim SOX_PATH as string
+dim SOX_NOEXT as string
+dim OUTPUT_PATH as string
+dim NumCommand as long
+dim CreatedFiles as integer
+
+const SILENCE = "0"
+const CARRIER = "1"
+
+create form as qform
+    width = 450
+    height = 200
+    center
+    caption = "LIRC to LedRem converter " & VERSION
+    BorderStyle = bsSingle
+    OnClose = CloseForm 
+    create MainMenu as QMainMenu
+        create mnFile as QMenuItem
+            caption = "File"
+            create mnOpen as qMenuItem
+                caption = "Open LIRC file..."
+                onclick = GetLircFile
+            end create
+            create mnExit as qMenuItem
+                caption = "Exit"
+                onclick = CloseForm
+            end create
+        end create        
+        create mnEdit as QMenuItem
+            caption = "Edit"
+            create mnPaths as qMenuItem
+                caption = "Set path for SOX..."
+                onclick = SetSoxPath
+            end create
+        end create        
+        create mnHelp as QMenuItem
+            caption = "Help"
+            create mnAbout as qMenuItem
+                caption = "About"
+                onclick = ShowAbout
+            end create
+        end create        
+    end create
+    create lblSOX as qlabel
+        top = 10
+        left = 10
+        caption = "SOX path:"
+    end create
+    create txtSOX as qedit
+        top = 10
+        left = 100
+        width = 300
+        text = "sox path"
+        enabled = 1
+    end create
+    create lblLIRC as qlabel
+        top = 40
+        left = 10
+        caption = "LIRC file name"
+    end create
+    create txtLIRC as qedit
+        top = 40
+        left = 100
+        width = 300
+        text = "LIRC path"
+        enabled = 1
+    end create
+    create lblOutput as qlabel
+        top = 70
+        left = 10
+        caption = "Output path:"
+    end create
+    create txtOUT as qedit
+        top = 70
+        left = 100
+        width = 300
+        text = "output"
+        enabled = 1
+    end create
+    create btnGo as qbutton 
+        top = 100
+        left = 160
+        caption = "GO"
+        onclick = Process
+    end create
+  CREATE StatusBar AS QStatusBar
+    SizeGrip = 0
+  end create            
+end create
+
+call ReadConfig
+call ShowVariables
+SetFocus(btnGo.handle)
+
+
+'SOX_PATH = "F:\documenti\testo\geocities\p800sito\altervista\LedRem\sox\sox"
+'OUTPUT_PATH = "F:\documenti\testo\geocities\p800sito\altervista\LedRem\"
+'LIRCFileName="F:\documenti\testo\geocities\p800sito\altervista\LedRem\ProvaLirc.conf"
+'in.open(LIRCFileName,fmOpenRead)
+'        FileContents = in.readbinstr(in.size)
+'    in.close
+'    showmessage(FileContents)
+
+form.showmodal
+
+sub Process
+dim InizioRaw as long
+    CreatedFiles = 0
+    call UpdateVariables
+    '*********** Read & store LIRC file contents:
+    if  FileExists(LIRCFileName)=0 then
+        showmessage(LIRCFILENAME & " not found!")
+        exit sub
+    end if
+    in.open(LIRCFileName,fmOpenRead)
+        FileContents = in.readbinstr(in.size)
+    in.close
+    ' ********** Parse all command definitions in file:    
+    NumCommand = 0 ' Commands counter    
+    InizioRaw = instr(FileContents,"begin raw_codes") ' Position at proper section of file.
+    FileContents=mid$(FileContents, InizioRaw, len(FileContents)-inizio)
+    while instr(FileContents,"name")>0
+        code = ""
+        inizio = instr(FileContents,"name")+3 ' Position at beginning of command section.
+        codename = mid$(FileContents,inizio+1,instr(inizio,FileContents,chr$(13))-(inizio+1)) ' Get command name.
+        inizio = instr(inizio,FileContents,chr$(13))     
+        fine = instr(inizio+2,FileContents,chr$(13) & chr$(10) & chr$(13) & chr$(10)) 
+        code = replacesubstr$(mid$(FileContents,inizio,fine-inizio),chr$(9),"")
+        code = replacesubstr$(code,chr$(10),"")
+        code = replacesubstr$(code,chr$(13),"") 
+        code = code & " "
+        code = ltrim$(code)
+        'showmessage(code)
+        FileContents = mid$(FileContents,fine,len(FileContents)-fine)        
+        NumCommand = NumCommand + 1
+        CreateWav(codename,code)   
+    wend
+    showmessage("Done. " & str$(CreatedFiles) & " files created.")
+end sub
+
+sub CreateWav(codename as string, code as string)
+    ' Create a WAV file depending on contents of LIRC configuration
+    ' file in RAW format, which contains carrier burst lengths.
+    dim CarrierLength as long
+    dim SilenceLength as long
+    dim id as long
+    dim commandline as string
+    dim outfile as qfilestream
+    dim BurstType as string
+    
+    ' Create the batch file which will contain all commands demanded to create the WAV file:
+    outfile.open(OUTPUT_PATH & "\command" & lead0$(NumCommand) & ".bat",fmCreate)
+    
+    ' First command creates the WAV file using ">" redirection.
+    commandline = " -c1 -r48000 -n -t raw - synth 0.100   sine 18000  vol 0 > base.raw"
+    outfile.writeline(SOX_NOEXT & commandline)
+    
+    BurstType = CARRIER ' WAV file begins with silence, but this variable is toggled
+    ' as soon as the loop starts, so I must assign it the opposite value of the needed one.
+    while instr(code," ")>0 ' ********* Parse all burst lengths in LIRC file
+        if BurstType = SILENCE then BurstType = CARRIER else BurstType = Silence
+        statusbar.SimpleText = codename : doevents       
+        CarrierLength = val(mid$(code,1,instr(code," ")-1))        
+        code = SkipSpaces(code) '  Delete just read burts length.              
+        ' If just read burst length is greater than 0, add a proper line to the batch file, generating Silence or Carrier burst:
+        if CarrierLength>0 then commandline = " -c1 -r48000 -n -t raw - synth " & str$(CarrierLength/1000000) & " sine 18000 vol " & BurstType & " >> base.raw"
+        'Actually writes to file the just created command:
+        outfile.writeline(SOX_NOEXT & commandline)
+    wend
+    ' Last command of the batch file is to convert the RAW file to WAV file, which will
+    ' have same name of original but with trailing underscore (_):
+    commandline = " -s2 -c1 -r48000 base.raw " & codename & "_.wav"
+    outfile.writeline(SOX_NOEXT & commandline)
+    outfile.close    
+    CreatedFiles = CreatedFiles + 1
+    showmessage(OUTPUT_PATH & "\command" & lead0$(NumCommand) & ".bat created.")
+end sub
+
+function Lead0$(n as long) as string
+    dim temp as string
+    temp = ""
+    if n<10 then temp = temp & "0"
+    if n<100 then temp = temp & "0"
+    if n<1000 then temp = temp & "0"
+    Lead0$ = temp & ltrim$(str$(n))
+end function
+
+
+sub GetLircFile
+    Filedialog.Caption = "Choose LIRC file to save into"
+    Filedialog.Filter = "LIRC files (*.conf)|*.conf|All files (*.*)|*.*"
+    if Filedialog.execute then
+        LIRCFileName = Filedialog.Filename
+        txtLIRC.text = LIRCFileName 
+    end if  
+    call ShowVariables
+    call WriteConfig
+end sub
+
+sub UpdateVariables
+    SOX_PATH = txtSOX.text
+    SOX_NOEXT = mid$(SOX_PATH,1,len(SOX_PATH)-4)
+    OUTPUT_PATH = txtOUT.text
+    LIRCFileName = txtLIRC.text
+end sub
+
+sub ShowVariables
+    txtSOX.text = SOX_PATH 
+    txtOUT.text = OUTPUT_PATH
+    txtLIRC.text = LIRCFileName
+end sub
+
+sub WriteConfig
+    szReturned = Space$(MAX_PATH)
+    WriteIni("Paths","SOX",SOX_PATH,"F:\documenti\rapidq\lirc2ledrem.ini")
+    szReturned = Space$(MAX_PATH)
+    WriteIni("Paths","Output",OUTPUT_PATH,"F:\documenti\rapidq\lirc2ledrem.ini")
+    szReturned = Space$(MAX_PATH)
+    WriteIni("Paths","LircFile",LIRCFileName,"F:\documenti\rapidq\lirc2ledrem.ini")    
+end sub
+
+sub ReadConfig
+    dim ConfigFile as qfilestream
+    dim riga as string
+    
+    szReturned = Space$(MAX_PATH)
+    SOX_PATH = GetIni("Paths","SOX","F:\documenti\rapidq\lirc2ledrem.ini")
+    szReturned = Space$(MAX_PATH)
+    OUTPUT_PATH = GetIni("Paths","Output","F:\documenti\rapidq\lirc2ledrem.ini")
+    szReturned = Space$(MAX_PATH)
+    LIRCFileName = GetIni("Paths","LircFile","F:\documenti\rapidq\lirc2ledrem.ini")  
+    call ShowVariables
+end sub
+
+
+sub SetSoxPath
+    Filedialog.Caption = "Select SOX ececutable"
+    FileDialog.Filter = "Executable files (*.exe)|*.exe|All files (*.*)|*.*"
+    if FileDialog.execute then
+        SOX_PATH = FileDialog.Filename
+        SOX_NOEXT = mid$(SOX_PATH,1,len(SOX_PATH)-4)
+        txtSOX.text = SOX_PATH 
+    end if  
+    call ShowVariables
+    call WriteConfig
+end sub
+
+sub CloseForm
+    call UpdateVariables
+    call WriteConfig  
+    end
+end sub
+
+function SkipSpaces(s as string) as string
+    dim temp as string
+    dim i as integer
+    s= mid$(s,instr(s," "),len(s)-instr(s," ")+1)    
+    i = 1
+    while mid$(s,i,1)=" "
+        i = i + 1
+    wend
+    temp= mid$(s,i,len(s)-(i-1))
+    SkipSpaces = temp
+end function
+
+sub ShowAbout
+dim msg as string
+msg = ""
+msg = msg & "LIRC to LedRem converter " & VERSION & Chr$(13) & Chr$(10)
+msg = msg & "" & Chr$(13) & Chr$(10)
+msg = msg & "This programs takes as input a LIRC configuration file" & Chr$(13) & Chr$(10)
+msg = msg & "containing RAW codes and  creates one BATCH file per" & Chr$(13) & Chr$(10)
+msg = msg & "each one of them. " & Chr$(13) & Chr$(10)
+msg = msg & "Each .bat file creates a .WAV file corresponding to" & Chr$(13) & Chr$(10)
+msg = msg & "the original remote control signal." & Chr$(13) & Chr$(10)
+msg = msg & "" & Chr$(13) & Chr$(10)
+msg = msg & "===>Program SOX must be accessible to Lirc2LedRem ( http://sox.sourceforge.net/ )" & Chr$(13) & Chr$(10)
+msg = msg & "" & Chr$(13) & Chr$(10)
+msg = msg & "Connect two leds in place of headphones on any WAV-compatible" & Chr$(13) & Chr$(10)
+msg = msg & "device and play these files to replicate your remote." & Chr$(13) & Chr$(10)
+msg = msg & "" & Chr$(13) & Chr$(10)
+msg = msg & "There are several alternatives to obtain a LIRC file for your device:" & Chr$(13) & Chr$(10)
+msg = msg & "1 - Download from http://www.lirc.org/remotes ;" & Chr$(13) & Chr$(10)
+msg = msg & "2 - Use LIRC and an IR-receiving circuit connected to serial port to sample your remote;" & Chr$(13) & Chr$(10)
+msg = msg & "3 - Use RAW2LIRC and an IR transmitting LED connected to microphone input" & Chr$(13) & Chr$(10)
+msg = msg & "    of your PC audio card to sample your remote." & Chr$(13) & Chr$(10)
+msg = msg & "" & Chr$(13) & Chr$(10)
+msg = msg & "lirc2ledrem.ini must be in program folder and contain these data:" & Chr$(13) & Chr$(10)
+msg = msg & "[Paths]" & Chr$(13) & Chr$(10)
+msg = msg & "SOX =[yourpath]\sox.exe"  & Chr$(13) & Chr$(10)
+msg = msg & "Output =[yourpath]"  & Chr$(13) & Chr$(10)
+msg = msg & "LircFile =[yourpath]\[example lirc file]" & Chr$(13) & Chr$(10)
+msg = msg & "" & Chr$(13) & Chr$(10)
+msg = msg & "Freeware by Luca Cassioli (2008)" & Chr$(13) & Chr$(10)
+showmessage msg
+end sub
