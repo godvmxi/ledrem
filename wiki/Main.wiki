@@ -1,0 +1,16 @@
+#summary Index page
+
+= Introduction =
+
+Program allows using any stereo-capable phone as an infrared remote control, even if phone does NOT have infrared capabilities.
+
+
+= Details =
+
+(to be added)
+
+
+= User feedback =
+Write here your experience, or just ask for help to other users:
+
+[feedback]
