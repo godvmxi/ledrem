@@ -18,18 +18,27 @@ Program allows using any stereo-capable phone as an infrared remote control, eve
 = The software =
 
 Currently an automated process to create needed files to replicate remote controls is only available for Windows platform; but it is possibile to create such files even by hand, using any O.S. supporting [http://sox.sourceforge.net/ SOX program]. SOX is available as:
-*Redhat RPM package: i386 binary (Also available for other targets and as Source Code) 
-*Debian package: Debian's SoX page 
-*Win32 Binary (Win95/98/NT/XP/Vista): sox-14.0.1.zip 
-*Win32 Cygwin Binary (With Audio support): sox-14.0.1-cygwin.zip 
-*NetBSD: Various Binaries 
-*OS/2 binary: sox-12.17.1.zip 
-*BeOS Binary: sox-12.18.2-beos-x86-ogg.zip (with MP3 and Ogg), sox-12.18.2-beos-x86.zip *and sox-12.18.2-beos-ppc.zip (from PlanetMir) 
-*Atari ST binary: sox12.17.2-m68k-atari.tgz (from PlanetMir) 
-*DGJPP DOS Binary
+
+-Redhat RPM package: i386 binary (Also available for other targets and as Source Code) 
+
+-Debian package: Debian's SoX page 
+
+-Win32 Binary (Win95/98/NT/XP/Vista): sox-14.0.1.zip 
+
+-Win32 Cygwin Binary (With Audio support): sox-14.0.1-cygwin.zip 
+
+-NetBSD: Various Binaries 
+
+-OS/2 binary: sox-12.17.1.zip 
+
+-BeOS Binary: sox-12.18.2-beos-x86-ogg.zip (with MP3 and Ogg), sox-12.18.2-beos-x86.zip and sox-12.18.2-beos-ppc.zip (from [http://www.planetmir.de/html/softw.htm PlanetMir]) 
+
+-Atari ST binary: sox12.17.2-m68k-atari.tgz (from [http://www.planetmir.de/html/softw.htm PlanetMir]) ) 
+
+-DGJPP DOS Binary
 
 
-See [http://sox.sourceforge.net/ its home page] for details about download. Go to my [SOX] dedicated page to find out how to create your WAV files using SOX.
+See [http://sox.sourceforge.net/ SOX home page] for details about download. Go to my [SOX] dedicated page to find out how to create your WAV files using SOX.
 
 
 = User feedback =
