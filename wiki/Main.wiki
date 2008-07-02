@@ -5,10 +5,14 @@
 Program allows using any stereo-capable phone as an infrared remote control, even if phone does NOT have infrared capabilities.
 
 
-= Details =
+= The theory explained =
+1- [http://jumpjack.wordpress.com/2008/05/20/worlds-cheapest-remote-control-replicator-just-1/ How to build the hardware]
+2 - [http://jumpjack.wordpress.com/2008/06/10/turn-your-phone-into-an-universal-remote-control/ Turn your phone into a remote control]
+3 - [http://www.planetmobile.it/jumpjack/ir2audio.xls Excel spreadsheet explaining theory]
+4 - [http://www.planetmobile.it/jumpjack/immagini/ledrem.JPG Explicative image taken from Excel file]
 
-(to be added)
-
+= The software =
+To be added
 
 = User feedback =
 Write here your experience, or just ask for help to other users:
