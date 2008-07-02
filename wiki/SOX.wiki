@@ -58,3 +58,14 @@ A very short example file would be:
  sox -c1 -r48000 -n -t raw - synth 0.004318 sine 18000 vol 0 >> base.raw
 
  sox -s2 -c1 -r48000 base.raw  sky000_.wav
+
+= Example =
+Download [http://code.google.com/p/ledrem/source/browse/trunk/ledrem/sky_SKY(on).zip this file] to look at an example. It contains:
+
+*sky-SKY(on).wav* - remote control sample
+
+*Provalirc.conf* - corresponding LIRC file
+
+*sky-SKY(on).bat* - DOS batch files which creates the final WAV file using SOX program 
+
+*sky-SKY(on)_.wav* - the final WAV file (to turn on Italian SKY Satellite receiver)
