@@ -70,3 +70,5 @@ Download [http://code.google.com/p/ledrem/source/browse/trunk/ledrem/sky_SKY(on)
 *sky-SKY(on).bat* - DOS batch files which creates the final WAV file using SOX program 
 
 *sky-SKY(on)_.wav* - the final WAV file (to turn on Italian SKY Satellite receiver)
+
+Please check [http://jumpjack.wordpress.com/2008/05/20/worlds-cheapest-remote-control-replicator-just-1/ this link] for further details about how to create a WAV file which replicates your remote.
