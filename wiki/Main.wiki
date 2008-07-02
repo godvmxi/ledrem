@@ -7,14 +7,33 @@ Program allows using any stereo-capable phone as an infrared remote control, eve
 
 = The theory explained =
 1- [http://jumpjack.wordpress.com/2008/05/20/worlds-cheapest-remote-control-replicator-just-1/ How to build the hardware]
+
 2 - [http://jumpjack.wordpress.com/2008/06/10/turn-your-phone-into-an-universal-remote-control/ Turn your phone into a remote control]
+
 3 - [http://www.planetmobile.it/jumpjack/ir2audio.xls Excel spreadsheet explaining theory]
+
 4 - [http://www.planetmobile.it/jumpjack/immagini/ledrem.JPG Explicative image taken from Excel file]
 
+
 = The software =
-To be added
+
+Currently an automated process to create needed files to replicate remote controls is only available for Windows platform; but it is possibile to create such files even by hand, using any O.S. supporting [http://sox.sourceforge.net/ SOX program]. SOX is available as:
+*Redhat RPM package: i386 binary (Also available for other targets and as Source Code) 
+*Debian package: Debian's SoX page 
+*Win32 Binary (Win95/98/NT/XP/Vista): sox-14.0.1.zip 
+*Win32 Cygwin Binary (With Audio support): sox-14.0.1-cygwin.zip 
+*NetBSD: Various Binaries 
+*OS/2 binary: sox-12.17.1.zip 
+*BeOS Binary: sox-12.18.2-beos-x86-ogg.zip (with MP3 and Ogg), sox-12.18.2-beos-x86.zip *and sox-12.18.2-beos-ppc.zip (from PlanetMir) 
+*Atari ST binary: sox12.17.2-m68k-atari.tgz (from PlanetMir) 
+*DGJPP DOS Binary
+
+
+See [http://sox.sourceforge.net/ its home page] for details about download. Go to my [SOX] dedicated page to find out how to create your WAV files using SOX.
+
 
 = User feedback =
+
 Write here your experience, or just ask for help to other users:
 
 [feedback]
