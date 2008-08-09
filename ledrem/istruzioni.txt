@@ -1,0 +1,19 @@
+ISTRUZIONI PER l'USO
+
+- Scompattare nella stessa cartella tutti gli eseguibili (RAW2LIRC, LIRC2LEDREM, e anche SOX, contenuto in un .zip a parte);
+
+- Modificare opportunamente il file lirc2ledrem.ini, in modo da adattare i percorsi al proprio sistema: occorre specificare dove si trova l'eseguibile di SOX, dove si vuole che vengano salvati i risultati, e dove il programma deve
+cercare il file LIRC creato da RAW2LIRC;
+
+- Campionare un tasto di un telecomando come descritto alla pagina:
+http://jumpjack.wordpress.com/2008/05/20/worlds-cheapest-remote-control-replicator-just-1/
+
+- Il campionamento ottenuto va salvato come file .WAV mono a 44100 campioni/secondo;
+
+- Il file .WAV va caricato in RAW2LIRC, dai dati "raw" ottiene un file di testo compatibile con LIRC (è possibile selezionare piu' di un file); 
+NOTA: è consigliabile "ritoccare" il file WAV prima di passarlo a RAW2LIRC, eliminando il "vuoto" presente prima dell'inizio dei dati veri e propri. Il file deve essere lungo solo pochi millesimi di secondo, e contenere UNA sola ripetizione del codice del telecomando;
+
+- Il file di testo ottenuto va caricato in LIRC2LEDREM, che da esso ricaverà uno o più file batch; dovrebbe essere possibile anche usare un normale file lirc (solo in formato RAW);
+
+- Lanciando ogni file batch, verrà creato un file WAV che, copiato sul cellulare, può essere riprodotto tramite LED per controllare il dispositivo desiderato.
+E' necessario un programma che permetta di riprodurre file WAV sul cellulare (RealPlayer o FIVN Player)
