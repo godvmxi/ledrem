@@ -1,0 +1,23 @@
+HOW TO
+
+- Unpack all files (also SOX, which is into a separated .zip) into the same folder;
+
+- Edit lirc2ledrem.ini to match your system: you must specify SOX's path, output path for LIRC2LEDREM, and path where RAW2LIRC saves its output, which is read by LIRC2LEDREM;
+
+- Sample your remote as described here:
+http://jumpjack.wordpress.com/2008/05/20/worlds-cheapest-remote-control-replicator-just-1/
+
+- Save sample as .WAV file (mono/44100);
+
+- Load .WAV into RAW2LIRC: program will create a text file LIRC-compatible (you can load many WAV at the same time).
+NOTE: you should edit the .WAV file before passing it to RAW2LIRC, in such a way that there is no silence before the actual signal. Resulting file should be only a few milliseconds long, and it must contain only ONE occurrence of the key-code;
+
+- Load into LIRC2LEDREM the text file you just created (or, hopefully, any "raw format" LIRC file); LIRC2LEDREM will create one .BAT file per each key you sampled;
+
+- Launch batch files to create the WAV files which you'll then copy on the phone;
+
+- Play on the phone the WAV files; you'll need a player supporting WAV, such as FIVN player or Real Player;
+
+
+
+contact: jumpjack at libero dot it
